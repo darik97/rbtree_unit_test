@@ -347,6 +347,26 @@ public class RedBlackTree<V extends Comparable<V>> {
         return prev;
     }
 
+    int getSize() {
+
+        ArrayDeque<RBNode> deque = new ArrayDeque<RBNode>();
+        ArrayDeque<RBNode> list = new ArrayDeque<RBNode>();
+        deque.add(root);
+        list.add(root);
+        while(!deque.isEmpty()) {
+            RBNode x = deque.pop();
+            if (x.getLeft() != null) {
+                deque.add(x.getLeft());
+                list.add(x.getLeft());
+            }
+            if (x.getRight() != null) {
+                deque.add(x.getRight());
+                list.add(x.getRight());
+            }
+        }
+        return list.size();
+    }
+
     protected int getHeight(RBNode begin) {
         if(begin == null) return 0;
         ArrayDeque<RBNode> deque = new ArrayDeque<RBNode>();
@@ -369,61 +389,41 @@ public class RedBlackTree<V extends Comparable<V>> {
         return height;
     }
 
-    int getSize() {
-
-        ArrayDeque<RBNode> deque = new ArrayDeque<RBNode>();
-        ArrayDeque<RBNode> list = new ArrayDeque<RBNode>();
-        deque.add(root);
-        list.add(root);
-        while(!deque.isEmpty()) {
-            RBNode x = deque.pop();
-            if (x.getLeft() != null) {
-                deque.add(x.getLeft());
-                list.add(x.getLeft());
-            }
-            if (x.getRight() != null) {
-                deque.add(x.getRight());
-                list.add(x.getRight());
-            }
-        }
-        return list.size();
+    protected String getMargin(int count) {
+        String str = "";
+        for(int i = 0; i < count; i++)
+            str += "\t";
+        return str;
     }
 
     @Override
     public String toString() {
         if(root == null) return "";
         String output = "";
+        String shift = "";
         int height = getHeight(root);
         int cols = (int) (Math.pow(2, height) - 1);
         RBNode nullNode = new RBNode(0);
         int count = 0;
         int level = 1;
 
-        ArrayDeque<RBNode> deque = new ArrayDeque<RBNode>();
-        ArrayDeque<RBNode> list = new ArrayDeque<RBNode>();
+        ArrayDeque<RBNode> deque = new ArrayDeque<>();
         deque.add(root);
-        list.add(root);
         while(!deque.isEmpty()) {
             count++;
             RBNode x = deque.pop();
             if(x == nullNode)
-                output += "(  )";
+                output += getMargin(cols / 2) + "(  )" + getMargin(cols / 2) + "\t";
             else
-                output += x + " ";
-            if (x.getLeft() != null) {
+                output += shift + getMargin(cols / 2) + x + getMargin(cols / 2) + "\t";
+            if (x.getLeft() != null)
                 deque.add(x.getLeft());
-                list.add(x.getLeft());
-            }
             else
                 deque.add(nullNode);
-            if (x.getRight() != null) {
+            if (x.getRight() != null)
                 deque.add(x.getRight());
-                list.add(x.getRight());
-            }
-            else {
+            else
                 deque.add(nullNode);
-                list.add(nullNode);
-            }
             if(count == Math.pow(2, level) - 1) {
                 output += "\n";
                 cols /= 2;
@@ -431,9 +431,7 @@ public class RedBlackTree<V extends Comparable<V>> {
             }
             if(height < level)
                 break;
-        }
-        for (RBNode item: list) {
-            output += item.getValue() + " ";
+
         }
         return output;
     }
